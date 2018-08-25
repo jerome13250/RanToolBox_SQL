@@ -1,0 +1,1 @@
+﻿SELECT * FROM public.t_ctn_result_hho3g2g;

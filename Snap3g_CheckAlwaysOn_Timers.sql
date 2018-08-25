@@ -1,0 +1,25 @@
+﻿SELECT 
+  snap3g_alwaysontimer.rnc, 
+  snap3g_alwaysontimer.radioaccessservice, 
+  snap3g_alwaysontimer.alwaysonconf, 
+  snap3g_alwaysontimer.alwaysontimer, 
+  snap3g_alwaysontimer.timert1, 
+  snap3g_alwaysontimer.timert1forcpc, 
+  snap3g_alwaysontimer.timert1forecellfach, 
+  snap3g_alwaysontimer.timert1forhsdpa, 
+  snap3g_alwaysontimer.timert1forhsdpaandedch, 
+  snap3g_alwaysontimer.userspecificinfo, 
+  snap3g_alwaysontimer.timert2, 
+  snap3g_alwaysontimer.timert2forcpc, 
+  snap3g_alwaysontimer.timert2forecellfach, 
+  snap3g_alwaysontimer.timert2forhsdpa, 
+  snap3g_alwaysontimer.timert2forhsdpaandedch, 
+  snap3g_alwaysontimer.timert2formultirab, 
+  snap3g_alwaysontimer.timert3formultiservicerabhsdpa, 
+  snap3g_alwaysontimer.timert3formultiservicerabr99, 
+  snap3g_alwaysontimer.timert3multiservicerabhsdpaandedch, 
+  snap3g_alwaysontimer.urapchtoidletimer
+FROM 
+  public.snap3g_alwaysontimer
+WHERE 
+  snap3g_alwaysontimer.userspecificinfo LIKE 'Silver User AO Settings';
