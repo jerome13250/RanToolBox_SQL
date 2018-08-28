@@ -31,6 +31,7 @@ SELECT DISTINCT
   "nokia_ADJI"."AdjiTxDiv",
   "nokia_ADJI"."AdjiTxPwrRACH",
   "nokia_ADJI"."AdjiUARFCN",
+  "nokia_ADJI"."BlindHOTargetCell",
   "nokia_ADJI"."NrtHopiIdentifier",
   "nokia_ADJI"."RtHopiIdentifier",
   "nokia_HOPI"."managedObject_HOPI",
