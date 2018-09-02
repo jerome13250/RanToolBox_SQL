@@ -1,4 +1,15 @@
-﻿-- Creation de la table de toutes les fréquences 2G 1800 utilisées par cellule nokia:
+﻿--compte le nombre de TRX pour exclure la ma_liste des cellules qui n'ont qu'un seul trx:
+DROP TABLE IF EXISTS tmp_nokia2g_nb_trx;
+CREATE TEMP TABLE tmp_nokia2g_nb_trx AS
+SELECT 
+  "nokia_TRX"."managedObject_distName_parent" AS "BTS_managedObject_distName", 
+  COUNT("nokia_TRX"."managedObject_TRX") AS nb_trx
+FROM 
+  public."nokia_TRX"
+GROUP BY
+  "nokia_TRX"."managedObject_distName_parent";
+
+-- Creation de la table de toutes les fréquences 2G 1800 utilisées par cellule nokia:
 DROP TABLE IF EXISTS t_checkLte1800Bandwith_01_freqconfig2g;
 CREATE TABLE t_checkLte1800Bandwith_01_freqconfig2g AS
 
@@ -37,9 +48,13 @@ FROM
   LEFT JOIN "nokia_MAL_frequency"
   ON
 	"nokia_MAL"."managedObject_distName" = "nokia_MAL_frequency"."managedObject_distName" 
+  LEFT JOIN tmp_nokia2g_nb_trx
+  ON
+	"nokia_BTS"."managedObject_distName" = tmp_nokia2g_nb_trx."BTS_managedObject_distName"
   WHERE
 	"nokia_BTS"."frequencyBandInUse" = '1' AND --On se restreint aux cellules 1800
-	"nokia_BTS"."hoppingMode" = '2' --Obligé de supprimer les cellules qui n'utilisent pas de Hopping car la MA Liste est renseignée quand même
+	"nokia_BTS"."hoppingMode" = '2' AND --Obligé de supprimer les cellules qui n'utilisent pas de Hopping car la MA Liste est renseignée quand même
+	tmp_nokia2g_nb_trx.nb_trx > 1 --On ne prend pas en compte la ma sur les cellules qui ont un seul TRX
 
 UNION --A noter que UNION par défault détruit tous les doublons (=UNION DISTINCT, sinon il faut utiliser UNION ALL)
 

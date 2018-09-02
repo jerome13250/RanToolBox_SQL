@@ -1,4 +1,16 @@
-﻿--Liste les BCCH Nokia :
+﻿--compte le nombre de TRX:
+DROP TABLE IF EXISTS tmp_nokia2g_nb_trx;
+CREATE TEMP TABLE tmp_nokia2g_nb_trx AS
+SELECT 
+  "nokia_TRX"."managedObject_distName_parent" AS "BTS_managedObject_distName", 
+  COUNT("nokia_TRX"."managedObject_TRX") AS nb_trx
+FROM 
+  public."nokia_TRX"
+GROUP BY
+  "nokia_TRX"."managedObject_distName_parent";
+
+
+--Liste les BCCH Nokia :
 DROP TABLE IF EXISTS tmp_nokia2g_bcch;
 CREATE TEMP TABLE tmp_nokia2g_bcch AS
 SELECT
@@ -10,7 +22,7 @@ FROM
 	"nokia_BTS"."managedObject_distName" = "nokia_TRX"."managedObject_distName_parent"
 
 WHERE
-  "nokia_TRX"."channel0Type" IN ('4','5') --filtre sur le BCCH: Attention il vaudrait mieux créer une table temp de bcch au lieude cela
+  "nokia_TRX"."channel0Type" IN ('4','5') --filtre sur le BCCH
 ;
 
 --Liste les fréquences initiales des TRX sauf le BCCH : utile pour les cellules sans MA List
@@ -56,6 +68,7 @@ SELECT
   "bsIdentityCodeNCC",
   "bsIdentityCodeBCC",
   tmp_nokia2g_bcch.bcch,
+  tmp_nokia2g_nb_trx.nb_trx,
   CASE "nokia_BTS"."hoppingMode"
 	WHEN '0' THEN 'Non-hopping'::text
 	WHEN '1' THEN 'Baseband hopping'::text
@@ -84,12 +97,13 @@ FROM
   LEFT JOIN tmp_nokia2g_bcch
   ON
 	"nokia_BTS"."managedObject_distName" = tmp_nokia2g_bcch."BTS_managedObject_distName"
-    LEFT JOIN tmp_nokia2g_trxinitialfreqs
+  LEFT JOIN tmp_nokia2g_trxinitialfreqs
   ON
 	"nokia_BTS"."managedObject_distName" = tmp_nokia2g_trxinitialfreqs."BTS_managedObject_distName"
 
---WHERE "nokia_BTS"."hoppingMode" != '2' --test
-
+  LEFT JOIN tmp_nokia2g_nb_trx
+  ON
+	"nokia_BTS"."managedObject_distName" = tmp_nokia2g_nb_trx."BTS_managedObject_distName"
 
 GROUP BY
   "nokia_BSC"."managedObject_distName",
@@ -113,6 +127,7 @@ GROUP BY
   "bsIdentityCodeNCC",
   "bsIdentityCodeBCC",
   tmp_nokia2g_bcch.bcch,
+  tmp_nokia2g_nb_trx.nb_trx,
   "nokia_BTS"."hoppingMode",
   tmp_nokia2g_trxinitialfreqs."Freq_List",
   "nokia_BTS"."usedMobileAllocation"

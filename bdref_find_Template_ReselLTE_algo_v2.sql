@@ -105,7 +105,7 @@ SELECT DISTINCT
   bdref_visutoporef_cell_nokia."CLASSE",
   bdref_visutoporef_cell_nokia."Reselection_LTE" AS template_resellte_actuel_bdref, 
   'Reselection_LTE'::text AS template,
-  CASE	WHEN "CLASSE" LIKE 'Nokia_RS%' THEN 'Default'::text
+  CASE	WHEN "CLASSE" LIKE 'Nokia_RS%' THEN 'Default_Classe_values'::text
 	WHEN "UARFCN" = '3011' THEN '800/2600/1800/2100'::text --dans tous les cas 800 en premier
 	ELSE COALESCE(templateu2100_reselection_lte, '800/2600/1800/2100'::text) END --si pas de correspondance, valeur par defaut
   AS valeur,
